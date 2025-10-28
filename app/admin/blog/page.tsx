@@ -1,0 +1,215 @@
+"use client"
+
+import type React from "react"
+
+import { useEffect, useState } from "react"
+import { createClient } from "@/lib/supabase/client"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string | null
+  content: string
+  image_url: string | null
+  published: boolean
+  created_at: string
+}
+
+export default function BlogAdminPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [formData, setFormData] = useState({
+    title: "",
+    slug: "",
+    content: "",
+    excerpt: "",
+    image_url: "",
+    published: false,
+  })
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
+  const fetchPosts = async () => {
+    const supabase = createClient()
+    const { data } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false })
+    setPosts(data || [])
+    setLoading(false)
+  }
+
+  const handleEdit = (post: BlogPost) => {
+    setEditingId(post.id)
+    setFormData({
+      title: post.title,
+      slug: post.slug,
+      content: post.content,
+      excerpt: post.excerpt || "",
+      image_url: post.image_url || "",
+      published: post.published,
+    })
+    setShowForm(true)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const supabase = createClient()
+
+    if (editingId) {
+      const { error } = await supabase.from("blog_posts").update(formData).eq("id", editingId)
+      if (!error) {
+        setEditingId(null)
+        setFormData({ title: "", slug: "", content: "", excerpt: "", image_url: "", published: false })
+        setShowForm(false)
+        fetchPosts()
+      }
+    } else {
+      const { error } = await supabase.from("blog_posts").insert([formData])
+      if (!error) {
+        setFormData({ title: "", slug: "", content: "", excerpt: "", image_url: "", published: false })
+        setShowForm(false)
+        fetchPosts()
+      }
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure?")) {
+      const supabase = createClient()
+      await supabase.from("blog_posts").delete().eq("id", id)
+      fetchPosts()
+    }
+  }
+
+  const handleCancel = () => {
+    setEditingId(null)
+    setFormData({ title: "", slug: "", content: "", excerpt: "", image_url: "", published: false })
+    setShowForm(false)
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold gradient-text">Blog Posts</h1>
+        <Button onClick={() => setShowForm(!showForm)}>{showForm ? "Cancel" : "New Post"}</Button>
+      </div>
+
+      {showForm && (
+        <Card className="glass border-white/20 mb-8 p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Title</label>
+              <Input
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="Post title"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Slug</label>
+              <Input
+                value={formData.slug}
+                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                placeholder="post-slug"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Excerpt</label>
+              <Input
+                value={formData.excerpt}
+                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                placeholder="Brief summary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Featured Image URL</label>
+              <Input
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                placeholder="https://example.com/image.jpg"
+                type="url"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Content</label>
+              <textarea
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                placeholder="Post content"
+                className="w-full px-3 py-2 rounded-lg bg-card/50 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50"
+                rows={6}
+                required
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="published"
+                checked={formData.published}
+                onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                className="rounded"
+              />
+              <label htmlFor="published" className="text-sm">
+                Publish
+              </label>
+            </div>
+            <div className="flex gap-2">
+              <Button type="submit" className="flex-1">
+                {editingId ? "Update Post" : "Create Post"}
+              </Button>
+              <Button type="button" variant="outline" onClick={handleCancel} className="flex-1 bg-transparent">
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
+
+      {loading ? (
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      ) : (
+        <div className="space-y-4">
+          {posts.map((post) => (
+            <Card key={post.id} className="glass border-white/20">
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle>{post.title}</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">/{post.slug}</p>
+                  </div>
+                  {post.published && (
+                    <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">Published</span>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">{post.excerpt}</p>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="bg-transparent" onClick={() => handleEdit(post)}>
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-transparent text-red-500 hover:text-red-600"
+                    onClick={() => handleDelete(post.id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
