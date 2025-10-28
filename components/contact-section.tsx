@@ -16,7 +16,7 @@ export function ContactSection() {
           <Link href="/contact">
             <Button size="lg">Start a Conversation</Button>
           </Link>
-          <a href="mailto:hello@lumengaze.com">
+          <a href="mailto:afolabifunmilade229@gmail.com">
             <Button size="lg" variant="outline" className="bg-transparent">
               Email Us
             </Button>

@@ -59,12 +59,12 @@ export default function ContactPage() {
             <Card className="glass border-white/20 p-6 text-center">
               <div className="text-4xl mb-4">📧</div>
               <h3 className="font-semibold mb-2">Email</h3>
-              <p className="text-sm text-muted-foreground">hello@lumengaze.com</p>
+              <p className="text-sm text-muted-foreground">afolabifunmilade229@gmail.com</p>
             </Card>
             <Card className="glass border-white/20 p-6 text-center">
               <div className="text-4xl mb-4">📍</div>
               <h3 className="font-semibold mb-2">Location</h3>
-              <p className="text-sm text-muted-foreground">San Francisco, CA</p>
+              <p className="text-sm text-muted-foreground">Lagos, Nigeria</p>
             </Card>
             <Card className="glass border-white/20 p-6 text-center">
               <div className="text-4xl mb-4">⏰</div>
