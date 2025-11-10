@@ -82,7 +82,7 @@ export function Footer() {
               Twitter
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/believe-studios?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition"
