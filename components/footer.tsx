@@ -90,7 +90,7 @@ export function Footer() {
               LinkedIn
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/BelieveGamesStudios?tab=repositories"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition"
