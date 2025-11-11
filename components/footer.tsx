@@ -74,12 +74,12 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">© 2025 LumenGaze. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a
-              href="https://twitter.com"
+              href="https://x.com/lumengaze?s=11"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition"
             >
-              Twitter
+              X
             </a>
             <a
               href="https://www.linkedin.com/in/believe-studios?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
