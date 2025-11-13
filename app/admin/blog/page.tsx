@@ -196,6 +196,11 @@ export default function BlogAdminPage() {
                   <Button variant="outline" size="sm" className="bg-transparent" onClick={() => handleEdit(post)}>
                     Edit
                   </Button>
+                    <Button variant="outline" size="sm" className="bg-transparent" onClick={() => {
+                      window.location.href = `/admin/blog/${post.id}/screenshots`
+                    }}>
+                      Screenshots
+                    </Button>
                   <Button
                     variant="outline"
                     size="sm"

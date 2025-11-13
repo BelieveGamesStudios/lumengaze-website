@@ -15,6 +15,7 @@ interface BlogPost {
   content: string
   excerpt: string | null
   image_url: string | null
+  screenshots?: string[] | { url: string; alt?: string }[]
   created_at: string
   updated_at: string
 }
@@ -25,6 +26,7 @@ export default function BlogDetailPage() {
   const [post, setPost] = useState<BlogPost | null>(null)
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentScreenshotIndex, setCurrentScreenshotIndex] = useState(0)
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -65,6 +67,23 @@ export default function BlogDetailPage() {
       day: "numeric",
     })
   }
+
+  // Helper to extract screenshot URL (handles both string and object formats)
+  const getScreenshotUrl = (screenshot: string | { url: string; alt?: string }) => {
+    return typeof screenshot === "string" ? screenshot : screenshot.url
+  }
+
+  const getScreenshotAlt = (index: number, screenshot: string | { url: string; alt?: string }) => {
+    if (typeof screenshot === "object" && screenshot.alt) {
+      return screenshot.alt
+    }
+    return `${post?.title} screenshot ${index + 1}`
+  }
+
+  // Get current screenshot
+  const screenshots = post?.screenshots || []
+  const currentScreenshot = screenshots.length > 0 ? screenshots[currentScreenshotIndex] : null
+  const currentScreenshotUrl = currentScreenshot ? getScreenshotUrl(currentScreenshot) : null
 
   if (loading) {
     return (
@@ -131,6 +150,76 @@ export default function BlogDetailPage() {
               <div className="text-foreground whitespace-pre-wrap leading-relaxed">{post.content}</div>
             </div>
           </Card>
+
+          {/* Screenshots Gallery */}
+          {screenshots.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-3xl font-bold mb-6">Screenshots</h2>
+              <div className="space-y-4">
+                {/* Main screenshot */}
+                <div className="rounded-lg overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 h-96">
+                  {currentScreenshotUrl && (
+                    <img
+                      src={currentScreenshotUrl}
+                      alt={getScreenshotAlt(currentScreenshotIndex, currentScreenshot!)}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+
+                {/* Screenshot thumbnails and navigation */}
+                {screenshots.length > 1 && (
+                  <div className="space-y-4">
+                    {/* Thumbnail grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                      {screenshots.map((screenshot, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentScreenshotIndex(index)}
+                          className={`relative rounded-lg overflow-hidden h-20 transition-all border-2 ${
+                            currentScreenshotIndex === index
+                              ? "border-primary ring-2 ring-primary/50"
+                              : "border-white/10 hover:border-white/30"
+                          }`}
+                        >
+                          <img
+                            src={getScreenshotUrl(screenshot)}
+                            alt={getScreenshotAlt(index, screenshot)}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Navigation info */}
+                    <div className="flex items-center justify-between text-sm text-muted-foreground px-2">
+                      <span>
+                        {currentScreenshotIndex + 1} / {screenshots.length}
+                      </span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() =>
+                            setCurrentScreenshotIndex((prev) => (prev === 0 ? screenshots.length - 1 : prev - 1))
+                          }
+                          className="px-3 py-1 rounded border border-white/20 hover:border-primary/50 transition"
+                        >
+                          ← Previous
+                        </button>
+                        <button
+                          onClick={() =>
+                            setCurrentScreenshotIndex((prev) => (prev === screenshots.length - 1 ? 0 : prev + 1))
+                          }
+                          className="px-3 py-1 rounded border border-white/20 hover:border-primary/50 transition"
+                        >
+                          Next →
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Related posts */}
           {relatedPosts.length > 0 && (
