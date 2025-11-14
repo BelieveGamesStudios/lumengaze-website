@@ -42,11 +42,6 @@ export function Footer() {
                   Careers
                 </Link>
               </li>
-              <li>
-                <Link href="#" className="hover:text-primary transition">
-                  Press
-                </Link>
-              </li>
             </ul>
           </div>
           <div>

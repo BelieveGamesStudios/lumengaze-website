@@ -7,6 +7,66 @@ import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import dynamic from "next/dynamic"
+import "react-quill/dist/quill.snow.css"
+
+// ReactQuill is a client-only rich text editor that preserves pasted Word formatting
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
+
+// Polyfill ReactDOM.findDOMNode for environments where it's missing (some React builds
+// used by Next/Turbopack may not expose findDOMNode). ReactQuill relies on it.
+if (typeof window !== "undefined") {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const ReactDOM = require("react-dom")
+    // @ts-ignore - add polyfill at runtime only if missing
+    if (ReactDOM && !ReactDOM.findDOMNode) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      ReactDOM.findDOMNode = (instance: any) => {
+        if (!instance) return null
+        // ReactQuill may expose editor or getEditor
+        if (instance.editor && instance.editor.root) return instance.editor.root
+        if (typeof instance.getEditor === "function") {
+          const ed = instance.getEditor()
+          return ed?.root || null
+        }
+        // If it's a DOM node, return it
+        if (instance instanceof HTMLElement) return instance
+        return null
+      }
+    }
+  } catch (e) {
+    // ignore — polyfill best-effort
+  }
+}
+
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["link", "image"],
+    ["clean"],
+  ],
+  clipboard: {
+    // By default Quill attempts to sanitize/normalize pasted content.
+    // matchVisual false keeps more of the original Word formatting where possible.
+    matchVisual: false,
+  },
+}
+
+const quillFormats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "list",
+  "bullet",
+  "link",
+  "image",
+]
 
 interface BlogPost {
   id: string
@@ -177,14 +237,20 @@ export default function BlogAdminPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Content</label>
-              <textarea
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Post content"
-                className="w-full px-3 py-2 rounded-lg bg-card/50 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50"
-                rows={6}
-                required
-              />
+              {/* Rich text editor preserves formatting when pasting from Word */}
+              <div className="prose prose-invert bg-card/50 p-2 rounded-lg border border-white/20">
+                {/* ReactQuill is dynamically imported; when not available this area will be empty */}
+                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                {/* @ts-ignore */}
+                <ReactQuill
+                  theme="snow"
+                  value={formData.content}
+                  onChange={(content: string) => setFormData({ ...formData, content })}
+                  modules={quillModules}
+                  formats={quillFormats}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Paste from Word and formatting (bold, lists, links) will be preserved.</p>
             </div>
             <div className="flex items-center gap-2">
               <input
