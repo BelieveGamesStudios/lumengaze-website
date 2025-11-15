@@ -121,7 +121,7 @@ export default function ProjectDetailPage() {
             <div className="flex gap-4">
               <a href={project.download_link} target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="bg-primary hover:bg-primary/90">
-                  Download Project
+                  Download
                 </Button>
               </a>
             </div>

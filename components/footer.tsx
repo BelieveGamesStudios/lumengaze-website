@@ -32,11 +32,11 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Company</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
+              {/* <li>
                 <Link href="#" className="hover:text-primary transition">
                   About
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/careers" className="hover:text-primary transition">
                   Careers
@@ -47,18 +47,18 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
+              {/* <li>
                 <Link href="#" className="hover:text-primary transition">
                   Privacy
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link href="#" className="hover:text-primary transition">
                   Terms
                 </Link>
-              </li>
+              </li> */}
               <li>
-                <Link href="#" className="hover:text-primary transition">
+                <Link href="/contact" className="hover:text-primary transition">
                   Contact
                 </Link>
               </li>
@@ -69,7 +69,7 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">© 2025 LumenGaze. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a
-              href="https://x.com/lumengaze?s=11"
+              href="https://x.com/lumengaze"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition"
