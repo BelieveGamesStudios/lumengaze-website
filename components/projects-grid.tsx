@@ -28,7 +28,11 @@ export function ProjectsGrid() {
   useEffect(() => {
     const fetchProjects = async () => {
       const supabase = createClient()
-      const { data } = await supabase.from("projects").select("*").order("created_at", { ascending: false })
+      const { data } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("published", true)
+        .order("created_at", { ascending: false })
 
       setProjects(data || [])
 
@@ -167,7 +171,10 @@ export function ProjectsGrid() {
                 <CardDescription className="text-xs">{project.category}</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-3">{project.description}</p>
+                <div 
+                  className="text-sm text-muted-foreground line-clamp-3 prose prose-sm prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: project.description }}
+                />
                 <button className="mt-4 w-full px-4 py-2 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary font-medium transition text-sm">
                   View Details
                 </button>

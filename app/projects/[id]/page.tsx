@@ -95,7 +95,10 @@ export default function ProjectDetailPage() {
           {/* Description */}
           <Card className="glass border-white/20 p-6">
             <h2 className="text-2xl font-bold mb-4">About</h2>
-            <p className="text-foreground whitespace-pre-wrap">{project.description}</p>
+            <div 
+              className="text-foreground prose prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: project.description }}
+            />
           </Card>
 
           {/* Video */}

@@ -16,7 +16,7 @@ export function Header() {
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          <Link href="#projects" className="text-sm hover:text-primary transition">
+          <Link href="/projects" className="text-sm hover:text-primary transition">
             Projects
           </Link>
           <Link href="#events" className="text-sm hover:text-primary transition">
@@ -43,7 +43,7 @@ export function Header() {
 
       {isOpen && (
         <div className="md:hidden border-t border-white/10 p-4 space-y-4">
-          <Link href="#projects" className="block text-sm hover:text-primary transition">
+          <Link href="/projects" className="block text-sm hover:text-primary transition">
             Projects
           </Link>
           <Link href="#events" className="block text-sm hover:text-primary transition">
