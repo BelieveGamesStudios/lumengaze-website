@@ -69,6 +69,7 @@ interface Project {
   category: string
   featured: boolean
   published?: boolean
+  coming_soon?: boolean
   thumbnail_url?: string
   video_link?: string
   download_link?: string
@@ -87,6 +88,7 @@ export default function ProjectsAdminPage() {
     category: "",
     featured: false,
     published: true,
+    coming_soon: false,
     thumbnail_url: "",
     video_link: "",
     download_link: "",
@@ -128,6 +130,7 @@ export default function ProjectsAdminPage() {
           category: "",
           featured: false,
           published: true,
+          coming_soon: false,
           thumbnail_url: "",
           video_link: "",
           download_link: "",
@@ -156,6 +159,7 @@ export default function ProjectsAdminPage() {
           category: "",
           featured: false,
           published: true,
+          coming_soon: false,
           thumbnail_url: "",
           video_link: "",
           download_link: "",
@@ -197,6 +201,7 @@ export default function ProjectsAdminPage() {
       category: project.category,
       featured: project.featured,
       published: project.published ?? true,
+      coming_soon: project.coming_soon ?? false,
       thumbnail_url: project.thumbnail_url || "",
       video_link: project.video_link || "",
       download_link: project.download_link || "",
@@ -234,6 +239,8 @@ export default function ProjectsAdminPage() {
                 description: "",
                 category: "",
                 featured: false,
+                published: true,
+                coming_soon: false,
                 thumbnail_url: "",
                 video_link: "",
                 download_link: "",
@@ -376,6 +383,18 @@ export default function ProjectsAdminPage() {
               />
               <label htmlFor="published" className="text-sm">
                 Published (visible to site visitors)
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="coming_soon"
+                checked={formData.coming_soon}
+                onChange={(e) => setFormData({ ...formData, coming_soon: e.target.checked })}
+                className="rounded"
+              />
+              <label htmlFor="coming_soon" className="text-sm">
+                Coming Soon (visible but download disabled)
               </label>
             </div>
             <Button type="submit" className="w-full">

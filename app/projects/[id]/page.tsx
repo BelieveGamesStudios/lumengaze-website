@@ -16,6 +16,7 @@ interface Project {
   thumbnail_url?: string
   video_link?: string
   download_link?: string
+  coming_soon?: boolean
   created_at: string
 }
 
@@ -89,7 +90,14 @@ export default function ProjectDetailPage() {
           {/* Title and Category */}
           <div>
             <h1 className="text-4xl font-bold gradient-text mb-2">{project.title}</h1>
-            <p className="text-lg text-muted-foreground">{project.category}</p>
+            <div className="flex items-center gap-3">
+              <p className="text-lg text-muted-foreground">{project.category}</p>
+              {project.coming_soon && (
+                <span className="text-xs bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full font-semibold">
+                  Coming Soon
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Description */}
@@ -122,11 +130,17 @@ export default function ProjectDetailPage() {
           {/* Download Button */}
           {project.download_link && (
             <div className="flex gap-4">
-              <a href={project.download_link} target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-primary hover:bg-primary/90">
-                  Download
+              {project.coming_soon ? (
+                <Button size="lg" disabled className="bg-primary/50 text-primary-foreground cursor-not-allowed">
+                  Coming Soon - Download Available Later
                 </Button>
-              </a>
+              ) : (
+                <a href={project.download_link} target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" className="bg-primary hover:bg-primary/90">
+                    Download
+                  </Button>
+                </a>
+              )}
             </div>
           )}
         </div>

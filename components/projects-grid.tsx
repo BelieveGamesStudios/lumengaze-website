@@ -12,6 +12,7 @@ interface Project {
   category: string
   thumbnail_url: string | null
   featured: boolean
+  coming_soon?: boolean
   reality_type?: string
 }
 
@@ -160,6 +161,11 @@ export function ProjectsGrid() {
                 {project.featured && (
                   <div className="absolute top-3 right-3 bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
                     Featured
+                  </div>
+                )}
+                {project.coming_soon && (
+                  <div className="absolute top-3 right-3 bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded-full text-xs font-semibold">
+                    Coming Soon
                   </div>
                 )}
                 <div className="absolute top-3 left-3 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-xs font-semibold">

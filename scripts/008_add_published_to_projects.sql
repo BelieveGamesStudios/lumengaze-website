@@ -6,3 +6,4 @@ ADD COLUMN IF NOT EXISTS published BOOLEAN DEFAULT TRUE;
 COMMENT ON COLUMN public.projects.published IS 'Whether the project is published (visible to site visitors)';
 
 -- Note: After running this migration, use the admin UI to toggle published/draft states.
+5
