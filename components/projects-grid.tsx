@@ -177,10 +177,9 @@ export function ProjectsGrid() {
                 <CardDescription className="text-xs">{project.category}</CardDescription>
               </CardHeader>
               <CardContent>
-                <div 
-                  className="text-sm text-muted-foreground line-clamp-3 prose prose-sm prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: project.description }}
-                />
+                <p className="text-sm text-muted-foreground line-clamp-3">
+                  {project.description.replace(/<[^>]*>/g, "")}
+                </p>
                 <button className="mt-4 w-full px-4 py-2 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary font-medium transition text-sm">
                   View Details
                 </button>
