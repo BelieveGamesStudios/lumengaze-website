@@ -17,6 +17,7 @@ interface Project {
   video_link?: string
   download_link?: string
   coming_soon?: boolean
+  screenshots?: Array<{ image_url: string }>
   created_at: string
 }
 
@@ -38,7 +39,19 @@ export default function ProjectDetailPage() {
           return
         }
 
-        setProject(data)
+        // Fetch screenshots if they exist
+        const { data: screenshots } = await supabase
+          .from("project_screenshots")
+          .select("image_url")
+          .eq("project_id", id)
+          .order("order_index", { ascending: true })
+
+        const projectData = {
+          ...data,
+          screenshots: screenshots || [],
+        }
+
+        setProject(projectData)
       } catch (err) {
         setError("Failed to load project")
       } finally {
@@ -123,6 +136,24 @@ export default function ProjectDetailPage() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
+              </div>
+            </Card>
+          )}
+
+          {/* Screenshots */}
+          {project.screenshots && project.screenshots.length > 0 && (
+            <Card className="glass border-white/20 p-6">
+              <h2 className="text-2xl font-bold mb-6">Screenshots</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {project.screenshots.map((screenshot: any, index: number) => (
+                  <div key={index} className="relative w-full h-48 rounded-lg overflow-hidden">
+                    <img
+                      src={screenshot.image_url}
+                      alt={`Screenshot ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                    />
+                  </div>
+                ))}
               </div>
             </Card>
           )}

@@ -164,7 +164,7 @@ export function ProjectsGrid() {
                   </div>
                 )}
                 {project.coming_soon && (
-                  <div className="absolute top-3 right-3 bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded-full text-xs font-semibold">
+                  <div className="absolute top-3 left-12 bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded-full text-xs font-semibold">
                     Coming Soon
                   </div>
                 )}
