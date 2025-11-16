@@ -25,12 +25,17 @@ export function ProjectsPreview() {
     const fetchProjects = async () => {
       const supabase = createClient()
 
-      const { data: allProjects } = await supabase.from("projects").select("category")
+      const { data: allProjects } = await supabase.from("projects").select("category").or("featured.eq.true,coming_soon.eq.true,published.eq.true")
 
       const uniqueCategories = ["All", ...new Set(allProjects?.map((p) => p.category).filter(Boolean) || [])]
       setCategories(uniqueCategories as string[])
 
-      const { data } = await supabase.from("projects").select("*").eq("featured", true).limit(6)
+      const { data } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("featured", true)
+        .or("featured.eq.true,coming_soon.eq.true,published.eq.true")
+        .limit(6)
 
       setProjects(data || [])
       setLoading(false)
@@ -102,7 +107,9 @@ export function ProjectsPreview() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{project.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {project.description.replace(/<[^>]*>/g, "")}
+                    </p>
                   </CardContent>
                 </Card>
               </Link>

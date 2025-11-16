@@ -87,8 +87,7 @@ export default function ProjectsAdminPage() {
     description: "",
     category: "",
     featured: false,
-    published: true,
-    coming_soon: false,
+    status: "unpublished",
     thumbnail_url: "",
     video_link: "",
     download_link: "",
@@ -111,8 +110,18 @@ export default function ProjectsAdminPage() {
     e.preventDefault()
     const supabase = createClient()
 
+    // Convert status to published and coming_soon fields
+    const dataToSubmit = {
+      ...formData,
+      published: formData.status === "published" || formData.status === "coming_soon",
+      coming_soon: formData.status === "coming_soon",
+    }
+    // Remove the status field before submitting
+    // @ts-ignore
+    delete dataToSubmit.status
+
     if (editingId) {
-      const { error } = await supabase.from("projects").update(formData).eq("id", editingId)
+      const { error } = await supabase.from("projects").update(dataToSubmit).eq("id", editingId)
       if (!error) {
         if (screenshots.length > 0) {
           await supabase.from("project_screenshots").delete().eq("project_id", editingId)
@@ -129,8 +138,7 @@ export default function ProjectsAdminPage() {
           description: "",
           category: "",
           featured: false,
-          published: true,
-          coming_soon: false,
+          status: "unpublished",
           thumbnail_url: "",
           video_link: "",
           download_link: "",
@@ -141,7 +149,17 @@ export default function ProjectsAdminPage() {
         fetchProjects()
       }
     } else {
-      const { data: project, error } = await supabase.from("projects").insert([formData]).select().single()
+      // Convert status to published and coming_soon fields
+      const dataToSubmit = {
+        ...formData,
+        published: formData.status === "published" || formData.status === "coming_soon",
+        coming_soon: formData.status === "coming_soon",
+      }
+      // Remove the status field before submitting
+      // @ts-ignore
+      delete dataToSubmit.status
+
+      const { data: project, error } = await supabase.from("projects").insert([dataToSubmit]).select().single()
 
       if (!error && project) {
         if (screenshots.length > 0) {
@@ -158,8 +176,7 @@ export default function ProjectsAdminPage() {
           description: "",
           category: "",
           featured: false,
-          published: true,
-          coming_soon: false,
+          status: "unpublished",
           thumbnail_url: "",
           video_link: "",
           download_link: "",
@@ -195,13 +212,20 @@ export default function ProjectsAdminPage() {
   }
 
   const handleEdit = (project: Project) => {
+    // Convert published and coming_soon back to status
+    let status = "unpublished"
+    if (project.coming_soon) {
+      status = "coming_soon"
+    } else if (project.published) {
+      status = "published"
+    }
+
     setFormData({
       title: project.title,
       description: project.description,
       category: project.category,
       featured: project.featured,
-      published: project.published ?? true,
-      coming_soon: project.coming_soon ?? false,
+      status: status,
       thumbnail_url: project.thumbnail_url || "",
       video_link: project.video_link || "",
       download_link: project.download_link || "",
@@ -239,8 +263,7 @@ export default function ProjectsAdminPage() {
                 description: "",
                 category: "",
                 featured: false,
-                published: true,
-                coming_soon: false,
+                status: "unpublished",
                 thumbnail_url: "",
                 video_link: "",
                 download_link: "",
@@ -373,29 +396,17 @@ export default function ProjectsAdminPage() {
                 Featured
               </label>
             </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="published"
-                checked={formData.published}
-                onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                className="rounded"
-              />
-              <label htmlFor="published" className="text-sm">
-                Published (visible to site visitors)
-              </label>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="coming_soon"
-                checked={formData.coming_soon}
-                onChange={(e) => setFormData({ ...formData, coming_soon: e.target.checked })}
-                className="rounded"
-              />
-              <label htmlFor="coming_soon" className="text-sm">
-                Coming Soon (visible but download disabled)
-              </label>
+            <div>
+              <label className="block text-sm font-medium mb-2">Status</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg bg-card/50 border border-white/20 text-foreground focus:outline-none focus:border-primary/50"
+              >
+                <option value="unpublished">Unpublished (Hidden from visitors)</option>
+                <option value="coming_soon">Coming Soon (Visible but download disabled)</option>
+                <option value="published">Published (Fully visible with download)</option>
+              </select>
             </div>
             <Button type="submit" className="w-full">
               {editingId ? "Update Project" : "Create Project"}

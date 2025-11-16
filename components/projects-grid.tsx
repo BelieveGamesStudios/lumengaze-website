@@ -32,7 +32,7 @@ export function ProjectsGrid() {
       const { data } = await supabase
         .from("projects")
         .select("*")
-        .eq("published", true)
+        .or("featured.eq.true,coming_soon.eq.true,published.eq.true")
         .order("created_at", { ascending: false })
 
       setProjects(data || [])
