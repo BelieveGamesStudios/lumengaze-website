@@ -61,6 +61,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import Link from "next/link"
 
 interface Career {
   id: string
@@ -182,6 +183,16 @@ export default function CareersAdminPage() {
           }}
         >
           {showForm ? "Cancel" : "Add Position"}
+        </Button>
+      </div>
+
+      {/* Submenu: Positions | Applications */}
+      <div className="flex items-center justify-start gap-3 mb-6">
+        <Button size="sm" variant="secondary" className="opacity-90" asChild>
+          <Link href="/admin/careers">Positions</Link>
+        </Button>
+        <Button size="sm" variant="ghost" className="opacity-90" asChild>
+          <Link href="/admin/careers/applications">Applications</Link>
         </Button>
       </div>
 
