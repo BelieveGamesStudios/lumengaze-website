@@ -86,7 +86,16 @@ export function CareersGrid() {
                   <span>{career.salary_range}</span>
                 </div>
               )}
-              <p className="text-sm text-muted-foreground line-clamp-2">{career.description}</p>
+              <p className="text-sm text-muted-foreground line-clamp-2">
+                {career.description
+                  ?.replace(/<[^>]*>/g, "") // Strip HTML tags
+                  .replace(/&nbsp;/g, " ") // Replace HTML entities
+                  .replace(/&amp;/g, "&")
+                  .replace(/&lt;/g, "<")
+                  .replace(/&gt;/g, ">")
+                  .replace(/&quot;/g, '"')
+                  .substring(0, 150)}
+              </p>
               <Button
                 className="w-full mt-4"
                 onClick={(e) => {

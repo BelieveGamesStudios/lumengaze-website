@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -75,7 +76,12 @@ export default function ApplicationsAdminPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Job Applications</h1>
-        <Button onClick={() => fetchApplications()}>Refresh</Button>
+        <div className="flex gap-2">
+          <Button onClick={() => fetchApplications()}>Refresh</Button>
+          <Button variant="outline" asChild>
+            <Link href="/admin/careers">Back to Positions</Link>
+          </Button>
+        </div>
       </div>
 
       <Card className="glass border-white/20">
