@@ -3,6 +3,60 @@
 import type React from "react"
 
 import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
+import "react-quill/dist/quill.snow.css"
+
+// ReactQuill dynamic import (client-only)
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
+
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["link", "image"],
+    ["clean"],
+  ],
+  clipboard: {
+    matchVisual: false,
+  },
+}
+
+const quillFormats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "list",
+  "bullet",
+  "link",
+  "image",
+]
+
+// Polyfill ReactDOM.findDOMNode (best-effort) to avoid runtime errors in some environments
+if (typeof window !== "undefined") {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const ReactDOM = require("react-dom")
+    // @ts-ignore
+    if (ReactDOM && !ReactDOM.findDOMNode) {
+      // @ts-ignore
+      ReactDOM.findDOMNode = (instance: any) => {
+        if (!instance) return null
+        if (instance.editor && instance.editor.root) return instance.editor.root
+        if (typeof instance.getEditor === "function") {
+          const ed = instance.getEditor()
+          return ed?.root || null
+        }
+        if (instance instanceof HTMLElement) return instance
+        return null
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+}
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -184,25 +238,29 @@ export default function CareersAdminPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Job Description</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Describe the role and responsibilities"
-                className="w-full px-3 py-2 rounded-lg bg-card/50 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50"
-                rows={5}
-                required
-              />
+              <div className="prose prose-invert bg-card/50 p-2 rounded-lg border border-white/20">
+                {/* @ts-ignore */}
+                <ReactQuill
+                  theme="snow"
+                  value={formData.description}
+                  onChange={(content: string) => setFormData({ ...formData, description: content })}
+                  modules={quillModules}
+                  formats={quillFormats}
+                />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Requirements</label>
-              <textarea
-                value={formData.requirements}
-                onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-                placeholder="List the required qualifications and skills"
-                className="w-full px-3 py-2 rounded-lg bg-card/50 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50"
-                rows={5}
-                required
-              />
+              <div className="prose prose-invert bg-card/50 p-2 rounded-lg border border-white/20">
+                {/* @ts-ignore */}
+                <ReactQuill
+                  theme="snow"
+                  value={formData.requirements}
+                  onChange={(content: string) => setFormData({ ...formData, requirements: content })}
+                  modules={quillModules}
+                  formats={quillFormats}
+                />
+              </div>
             </div>
             <Button type="submit" className="w-full">
               {editingId ? "Update Position" : "Create Position"}

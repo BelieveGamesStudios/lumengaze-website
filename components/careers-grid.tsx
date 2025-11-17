@@ -21,6 +21,13 @@ export function CareersGrid() {
   const [careers, setCareers] = useState<Career[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCareer, setSelectedCareer] = useState<Career | null>(null)
+  const [fullName, setFullName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [cvFile, setCvFile] = useState<File | null>(null)
+  const [notes, setNotes] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchCareers = async () => {
@@ -128,17 +135,157 @@ export function CareersGrid() {
 
               <div>
                 <h3 className="text-lg font-semibold mb-3">About This Role</h3>
-                <p className="text-muted-foreground whitespace-pre-wrap">{selectedCareer.description}</p>
+                <div
+                  className="text-muted-foreground prose prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: selectedCareer.description }}
+                />
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold mb-3">Requirements</h3>
-                <p className="text-muted-foreground whitespace-pre-wrap">{selectedCareer.requirements}</p>
+                <div
+                  className="text-muted-foreground prose prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: selectedCareer.requirements }}
+                />
               </div>
 
-              <Button className="w-full" size="lg">
-                Apply Now By Sending A Mail to afolabifunmilade229@gmail.com
-              </Button>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault()
+                  if (!selectedCareer) return
+                  setSubmitError(null)
+                  setSubmitSuccess(null)
+
+                  if (!fullName.trim()) {
+                    setSubmitError("Please enter your full name.")
+                    return
+                  }
+                  if (!phone.trim()) {
+                    setSubmitError("Please enter your phone number.")
+                    return
+                  }
+                  if (!cvFile) {
+                    setSubmitError("Please upload your CV.")
+                    return
+                  }
+
+                  setSubmitting(true)
+                  try {
+                    const supabase = createClient()
+
+                    // Upload CV to storage bucket 'applications'
+                    const filePath = `careers/${selectedCareer.id}/${Date.now()}_${cvFile.name}`
+                    const { error: uploadError } = await supabase.storage.from("applications").upload(filePath, cvFile)
+
+                    if (uploadError) {
+                      setSubmitError("Failed to upload CV. Ensure the 'applications' storage bucket exists and is writable.")
+                      setSubmitting(false)
+                      return
+                    }
+
+                    // Get public URL (may require the bucket to be public or use signed URL)
+                    const { data: publicData } = await supabase.storage.from("applications").getPublicUrl(filePath)
+                    // @ts-ignore
+                    const cvUrl = publicData?.publicUrl || ""
+
+                    // Insert application record into `career_applications` table
+                    const { error: insertError } = await supabase.from("career_applications").insert([
+                      {
+                        career_id: selectedCareer.id,
+                        full_name: fullName,
+                        role: selectedCareer.title,
+                        phone,
+                        cv_url: cvUrl,
+                        notes,
+                      },
+                    ])
+
+                    if (insertError) {
+                      setSubmitError("Failed to save application. Ensure the `career_applications` table exists.")
+                      setSubmitting(false)
+                      return
+                    }
+
+                    setSubmitSuccess("Application submitted — thank you! We'll be in touch.")
+                    setFullName("")
+                    setPhone("")
+                    setCvFile(null)
+                    setNotes("")
+                  } catch (err) {
+                    // Generic fallback
+                    setSubmitError("An unexpected error occurred while submitting your application.")
+                  } finally {
+                    setSubmitting(false)
+                  }
+                }}
+              >
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Full name</label>
+                    <input
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="w-full px-3 py-2 rounded bg-card/50 border border-white/10 text-foreground"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Role Applying For</label>
+                    <input value={selectedCareer.title} readOnly className="w-full px-3 py-2 rounded bg-card/30 border border-white/10 text-foreground" />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Phone number</label>
+                    <input
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full px-3 py-2 rounded bg-card/50 border border-white/10 text-foreground"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Upload CV</label>
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => setCvFile(e.target.files ? e.target.files[0] : null)}
+                      className="w-full px-3 py-2 rounded bg-card/50 border border-white/20 text-foreground"
+                      required
+                    />
+                    {cvFile && (
+                      <p className="text-sm text-muted-foreground mt-2">Selected file: {cvFile.name}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Other notes</label>
+                    <textarea
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      className="w-full px-3 py-2 rounded bg-card/50 border border-white/10 text-foreground"
+                      rows={4}
+                    />
+                  </div>
+
+                  {submitError && <p className="text-sm text-red-400">{submitError}</p>}
+                  {submitSuccess && <p className="text-sm text-green-400">{submitSuccess}</p>}
+
+                  <div className="flex gap-2">
+                    <button type="submit" disabled={submitting} className="px-4 py-2 rounded bg-primary text-primary-foreground w-full">
+                      {submitting ? "Submitting..." : "Submit Application"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCareer(null)}
+                      className="px-4 py-2 rounded border border-white/10 bg-transparent w-full"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </form>
             </CardContent>
           </Card>
         </div>
