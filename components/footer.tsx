@@ -13,17 +13,17 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Product</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <Link href="#projects" className="hover:text-primary transition">
+                <Link href="/projects" className="hover:text-primary transition">
                   Projects
                 </Link>
               </li>
               <li>
-                <Link href="#events" className="hover:text-primary transition">
+                <Link href="/" className="hover:text-primary transition">
                   Events
                 </Link>
               </li>
               <li>
-                <Link href="#blog" className="hover:text-primary transition">
+                <Link href="/blog" className="hover:text-primary transition">
                   Blog
                 </Link>
               </li>
