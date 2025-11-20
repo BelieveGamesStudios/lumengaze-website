@@ -52,6 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Events", href: "/admin/events", icon: "📅" },
     { label: "Careers", href: "/admin/careers", icon: "💼" },
     { label: "Contact Submissions", href: "/admin/contact", icon: "💬" },
+    { label: "Privacy Policy", href: "/admin/privacy", icon: "🔒" },
   ]
 
   return (
