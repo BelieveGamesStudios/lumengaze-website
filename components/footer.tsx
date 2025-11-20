@@ -47,11 +47,11 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              {/* <li>
-                <Link href="#" className="hover:text-primary transition">
-                  Privacy
+              <li>
+                <Link href="/privacy" className="hover:text-primary transition">
+                  Privacy Policy
                 </Link>
-              </li> */}
+              </li>
               {/* <li>
                 <Link href="#" className="hover:text-primary transition">
                   Terms

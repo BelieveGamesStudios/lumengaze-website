@@ -27,6 +27,7 @@ export default function BlogDetailPage() {
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [currentScreenshotIndex, setCurrentScreenshotIndex] = useState(0)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -78,6 +79,17 @@ export default function BlogDetailPage() {
       return screenshot.alt
     }
     return `${post?.title} screenshot ${index + 1}`
+  }
+
+  const handleCopyLink = async () => {
+    const postUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/blog/${post?.slug}`
+    try {
+      await navigator.clipboard.writeText(postUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy link:", err)
+    }
   }
 
   // Get current screenshot
@@ -174,6 +186,17 @@ export default function BlogDetailPage() {
               </svg>
               <span className="text-sm">WhatsApp</span>
             </a>
+            <button
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 text-white transition"
+              title="Copy link to clipboard"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+              </svg>
+              <span className="text-sm">{copied ? "Copied!" : "Copy Link"}</span>
+            </button>
           </div>
 
           {/* Featured image */}
