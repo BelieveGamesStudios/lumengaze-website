@@ -22,6 +22,7 @@ export function CareersGrid() {
   const [loading, setLoading] = useState(true)
   const [selectedCareer, setSelectedCareer] = useState<Career | null>(null)
   const [fullName, setFullName] = useState("")
+  const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [cvFile, setCvFile] = useState<File | null>(null)
   const [notes, setNotes] = useState("")
@@ -169,6 +170,14 @@ export function CareersGrid() {
                     setSubmitError("Please enter your full name.")
                     return
                   }
+                  if (!email.trim()) {
+                    setSubmitError("Please enter your email address.")
+                    return
+                  }
+                  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    setSubmitError("Please enter a valid email address.")
+                    return
+                  }
                   if (!phone.trim()) {
                     setSubmitError("Please enter your phone number.")
                     return
@@ -202,6 +211,7 @@ export function CareersGrid() {
                       {
                         career_id: selectedCareer.id,
                         full_name: fullName,
+                        email,
                         role: selectedCareer.title,
                         phone,
                         cv_url: cvUrl,
@@ -217,6 +227,7 @@ export function CareersGrid() {
 
                     setSubmitSuccess("Application submitted — thank you! We'll be in touch.")
                     setFullName("")
+                    setEmail("")
                     setPhone("")
                     setCvFile(null)
                     setNotes("")
@@ -235,6 +246,18 @@ export function CareersGrid() {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       className="w-full px-3 py-2 rounded bg-card/50 border border-white/10 text-foreground"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Email</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-3 py-2 rounded bg-card/50 border border-white/10 text-foreground"
+                      placeholder="your.email@example.com"
                       required
                     />
                   </div>

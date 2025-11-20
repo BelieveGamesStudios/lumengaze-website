@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS public.career_applications (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   career_id uuid REFERENCES public.careers(id) ON DELETE SET NULL,
   full_name text NOT NULL,
+  email text NOT NULL,
   role text NOT NULL,
   phone text,
   cv_url text,

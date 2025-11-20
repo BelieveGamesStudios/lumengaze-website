@@ -10,6 +10,7 @@ interface ApplicationRecord {
   id: string
   career_id: string | null
   full_name: string
+  email: string
   role: string
   phone?: string | null
   cv_url?: string | null
@@ -39,6 +40,7 @@ export default function ApplicationsAdminPage() {
           id,
           career_id,
           full_name,
+          email,
           role,
           phone,
           cv_url,
@@ -99,6 +101,7 @@ export default function ApplicationsAdminPage() {
                 <thead>
                   <tr className="text-left text-sm text-muted-foreground">
                     <th className="py-2 pr-4">Name</th>
+                    <th className="py-2 pr-4">Email</th>
                     <th className="py-2 pr-4">Role</th>
                     <th className="py-2 pr-4">Phone</th>
                     <th className="py-2 pr-4">CV</th>
@@ -113,6 +116,11 @@ export default function ApplicationsAdminPage() {
                       <td className="py-3 pr-4">
                         <div className="font-medium">{a.full_name}</div>
                         <div className="text-xs text-muted-foreground">{a.career_title || "—"}</div>
+                      </td>
+                      <td className="py-3 pr-4">
+                        <a href={`mailto:${a.email}`} className="text-primary hover:underline text-sm">
+                          {a.email}
+                        </a>
                       </td>
                       <td className="py-3 pr-4">{a.role}</td>
                       <td className="py-3 pr-4">{a.phone || "—"}</td>
