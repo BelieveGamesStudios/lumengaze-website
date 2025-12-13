@@ -28,7 +28,7 @@ export function HeroSection() {
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="mb-6 inline-block">
-          <div className="glass px-4 py-2 rounded-full text-sm font-medium">✨ Welcome to the Future of XR</div>
+          <div className="glass px-4 py-2 rounded-full text-sm font-medium"> Welcome to the Future of XR</div>
         </div>
 
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 gradient-text leading-tight">
@@ -56,7 +56,7 @@ export function HeroSection() {
         {/* Featured stats */}
         <div className="grid grid-cols-3 gap-4 mt-16 max-w-2xl mx-auto">
           <div className="glass p-4 rounded-lg">
-            <div className="text-2xl font-bold gradient-text">50+</div>
+            <div className="text-2xl font-bold gradient-text">3+</div>
             <div className="text-sm text-muted-foreground">Projects</div>
           </div>
           <div className="glass p-4 rounded-lg">
