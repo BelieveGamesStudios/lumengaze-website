@@ -73,7 +73,7 @@ interface Project {
   thumbnail_url?: string
   video_link?: string
   download_link?: string
-  reality_type?: string
+  app_type?: string
   created_at: string
 }
 
@@ -91,7 +91,7 @@ export default function ProjectsAdminPage() {
     thumbnail_url: "",
     video_link: "",
     download_link: "",
-    reality_type: "AR",
+    app_type: "AR",
   })
   const [screenshots, setScreenshots] = useState<string[]>([])
 
@@ -142,7 +142,7 @@ export default function ProjectsAdminPage() {
           thumbnail_url: "",
           video_link: "",
           download_link: "",
-          reality_type: "AR",
+          app_type: "AR",
         })
         setScreenshots([])
         setShowForm(false)
@@ -180,7 +180,7 @@ export default function ProjectsAdminPage() {
           thumbnail_url: "",
           video_link: "",
           download_link: "",
-          reality_type: "AR",
+          app_type: "AR",
         })
         setScreenshots([])
         setShowForm(false)
@@ -229,7 +229,7 @@ export default function ProjectsAdminPage() {
       thumbnail_url: project.thumbnail_url || "",
       video_link: project.video_link || "",
       download_link: project.download_link || "",
-      reality_type: project.reality_type || "AR",
+      app_type: project.app_type || "AR",
     })
 
     const fetchScreenshots = async () => {
@@ -267,7 +267,7 @@ export default function ProjectsAdminPage() {
                 thumbnail_url: "",
                 video_link: "",
                 download_link: "",
-                reality_type: "AR",
+                app_type: "AR",
               })
             }
           }}
@@ -314,15 +314,17 @@ export default function ProjectsAdminPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Reality Type</label>
+              <label className="block text-sm font-medium mb-2">App Type</label>
               <select
-                value={formData.reality_type}
-                onChange={(e) => setFormData({ ...formData, reality_type: e.target.value })}
+                value={formData.app_type}
+                onChange={(e) => setFormData({ ...formData, app_type: e.target.value })}
                 className="w-full px-3 py-2 rounded-lg bg-card/50 border border-white/20 text-foreground focus:outline-none focus:border-primary/50"
               >
                 <option value="AR">AR (Augmented Reality)</option>
                 <option value="VR">VR (Virtual Reality)</option>
                 <option value="MR">MR (Mixed Reality)</option>
+                <option value="PC">PC (Desktop App)</option>
+                <option value="Mobile">Mobile (Mobile App)</option>
               </select>
             </div>
 
@@ -426,7 +428,7 @@ export default function ProjectsAdminPage() {
                   <div>
                     <CardTitle>{project.title}</CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">{project.category}</p>
-                    <p className="text-xs text-primary mt-1">{project.reality_type || "AR"}</p>
+                    <p className="text-xs text-primary mt-1">{project.app_type || "AR"}</p>
                   </div>
                   {project.featured && (
                     <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded">Featured</span>

@@ -13,7 +13,7 @@ interface Project {
   thumbnail_url: string | null
   featured: boolean
   coming_soon?: boolean
-  reality_type?: string
+  app_type?: string
 }
 
 export function ProjectsGrid() {
@@ -24,7 +24,7 @@ export function ProjectsGrid() {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [selectedRealityType, setSelectedRealityType] = useState("All")
   const [categories, setCategories] = useState<string[]>([])
-  const realityTypes = ["All", "AR", "VR", "MR"]
+  const realityTypes = ["All", "AR", "VR", "MR", "PC", "Mobile"]
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -56,7 +56,7 @@ export function ProjectsGrid() {
     }
 
     if (selectedRealityType !== "All") {
-      filtered = filtered.filter((p) => (p.reality_type || "AR") === selectedRealityType)
+      filtered = filtered.filter((p) => (p.app_type || "AR") === selectedRealityType)
     }
 
     // Filter by search term
@@ -169,7 +169,7 @@ export function ProjectsGrid() {
                   </div>
                 )}
                 <div className="absolute top-3 left-3 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-xs font-semibold">
-                  {project.reality_type || "AR"}
+                  {project.app_type || "AR"}
                 </div>
               </div>
               <CardHeader>
